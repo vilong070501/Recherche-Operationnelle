@@ -65,13 +65,13 @@ def update(frame):
     nx.draw_networkx(graph, pos=layout, with_labels=True, ax=ax)
     
     # Draw the highlighted edges with a different color
-    nx.draw_networkx_edges(graph, pos=layout, edgelist=highlighted_edges, edge_color='red')
+    nx.draw_networkx_edges(graph, pos=layout, edgelist=highlighted_edges, edge_color='red', width=3)
 
 # Set the number of frames equal to the length of M
 num_frames = len(eulerian_circuit)
 
 # Create the animation using the update function and the number of frames
-ani = animation.FuncAnimation(fig, update, frames=num_frames, interval=1000)
+ani = animation.FuncAnimation(fig, update, frames=num_frames, interval=800)
 
 # Show the animation
 plt.show()
