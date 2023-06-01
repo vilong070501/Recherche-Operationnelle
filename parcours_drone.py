@@ -1,77 +1,56 @@
-import osmnx as ox
 import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
-# Define the location or address
-#address = "Montreal, Canada"
+def shortest_travel(graph, source_node=None):
+    #if not nx.is_eulerian(graph):
+    augmented_graph = graph.copy()
 
-# Use OSMnx to download the street network
-#graph = ox.graph_from_place(address, network_type='all_private')
+    # Identify nodes with odd degrees
+    odd_degree_nodes = [node for node, degree in graph.degree if degree % 2 != 0]
 
-graph = nx.MultiGraph()
+    # Compute distance matrix with dijkstra algorithm
+    distance_matrix = dict(nx.all_pairs_dijkstra_path_length(graph, weight='weight'))
 
-# Ajout des sommets et des arêtes avec leurs poids (distances)
-edges = [
-    (0, 1, 10),
-    (0, 2, 7),
-    (0, 3, 4),
-    (1, 4, 8),
-    (1, 6, 10),
-    (2, 3, 3),
-    (2, 6, 2),
-    (3, 4, 1),
-    (3, 7, 9),
-    (4, 5, 7),
-    (4, 8, 13),
-    (5, 7, 2),
-    (6, 8, 0),
-    (7, 8, 25)
-]
-
-# Ajout des arêtes avec les poids associés
-graph.add_weighted_edges_from(edges)
-
-# Identify nodes with odd degrees
-odd_degree_nodes = [node for node, degree in graph.degree if degree % 2 != 0]
-
-# Create a complete graph among the odd degree nodes
-complete_graph = nx.complete_graph(odd_degree_nodes)
+    # Create a complete graph among the odd degree nodes
+    complete_graph = nx.complete_graph(odd_degree_nodes)
+    weights = {(x,y): {"weight": distance_matrix[x][y]} for x, y in complete_graph.edges}
+    nx.set_edge_attributes(complete_graph, weights)
 
 
-# Compute minimum weight matching on the complete graph
-matching = nx.algorithms.matching.min_weight_matching(complete_graph)
-
-# Add matching edges to the original graph
-graph.add_edges_from(matching)
-
-# Calculate the Eulerian circuit
-eulerian_circuit = list(nx.eulerian_circuit(graph))
-print(eulerian_circuit)
-
-# Create a figure and axis for the animation
-fig, ax = plt.subplots()
-
-# Layout for the graph
-layout = nx.spring_layout(graph, seed=42)
-
-# Function to update the edge colors for each frame of the animation
-def update(frame):
-    ax.clear()
-    # Get the edges to highlight in the current frame
-    highlighted_edges = eulerian_circuit[:frame+1]
+    # Compute minimum weight matching on the complete graph
+    matching = nx.algorithms.matching.min_weight_matching(complete_graph, weight='weight')
+    weighted_matching = [(x, y, distance_matrix[x][y]) for x, y in matching]
+    seen = []
     
-    # Draw the graph with default edge colors
-    nx.draw_networkx(graph, pos=layout, with_labels=True, ax=ax)
-    
-    # Draw the highlighted edges with a different color
-    nx.draw_networkx_edges(graph, pos=layout, edgelist=highlighted_edges, edge_color='red', width=3)
+    # Add matching edges to the original graph
+    augmented_graph.add_weighted_edges_from(weighted_matching)
+    print(matching)
 
-# Set the number of frames equal to the length of M
-num_frames = len(eulerian_circuit)
+    # Calculate the Eulerian circuit
+    eulerian_circuit = []
+    naive_circuit = list(nx.eulerian_circuit(augmented_graph, source_node))
 
-# Create the animation using the update function and the number of frames
-ani = animation.FuncAnimation(fig, update, frames=num_frames, interval=800)
+    for edge in naive_circuit:
+        x = (edge[1], edge[0])
+        if edge in matching or x in matching:
+            if edge not in graph.edges:
+                aug_path = nx.shortest_path(graph, edge[0], edge[1])
+                eulerian_circuit += list(zip(aug_path[:-1], aug_path[1:]))
+            else:
+                sorted_edge = tuple(sorted(edge))
+                if sorted_edge not in seen:
+                    eulerian_circuit.append(edge)
+                    seen.append(sorted_edge)
+                else:
+                    aug_path = nx.shortest_path(graph, edge[0], edge[1])
+                    eulerian_circuit += list(zip(aug_path[:-1], aug_path[1:]))
+        else:
+            eulerian_circuit.append(edge)
 
-# Show the animation
-plt.show()
+    """
+    for edge in eulerian_circuit:
+        if edge not in graph.edges:
+            print("NOOOOOOOOOOOOOOOOOOOO: ", edge)
+    """
+    return eulerian_circuit
+
+
