@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from math import ceil
 
 def draw_simple_graph(graph, eulerian_circuit):
     # Create a figure and axis for the animation
@@ -29,3 +30,9 @@ def draw_simple_graph(graph, eulerian_circuit):
 
     # Show the animation
     plt.show()
+
+def cost(distance):
+    #12hours of work
+    t = distance/(50)
+    j = ceil(t/12)
+    return 100 * j + distance * 0.01
