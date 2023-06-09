@@ -45,12 +45,7 @@ def shortest_travel(graph, source_node=None):
                     eulerian_circuit += list(zip(aug_path[:-1], aug_path[1:]))
         else:
             eulerian_circuit.append(edge)
-
-    """
+    somme = 0
     for edge in eulerian_circuit:
-        if edge not in graph.edges:
-            print("NOOOOOOOOOOOOOOOOOOOO: ", edge)
-    """
-    return eulerian_circuit
-
-
+        somme += distance_matrix[edge[0]][edge[1]]
+    return eulerian_circuit, somme

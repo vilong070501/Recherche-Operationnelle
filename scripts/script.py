@@ -13,7 +13,7 @@ graph = ox.graph_from_place(address, network_type='drive')
 # Convert the graph to an undirected graph
 graph = graph.to_undirected()
 
-eulerian_circuit = pd.shortest_travel(graph)
+eulerian_circuit, distance = pd.shortest_travel(graph)
 
 # Dessinez le sous-graphe en gris
 fig, ax = ox.plot_graph(graph, figsize=(10,10), edge_color='gray', edge_linewidth=0.5, 
