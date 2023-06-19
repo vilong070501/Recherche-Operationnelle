@@ -78,16 +78,16 @@ def make_directed_eulerian_graph(graph):
 
 # Example usage
 # Create a directed graph using NetworkX
-graph = nx.MultiDiGraph()
+#graph = nx.MultiDiGraph()
 #graph.add_edges_from([(1, 2), (2, 3), (3, 1), (3, 4), (4, 1)])
 #graph.add_edges_from([(1, 2), (2, 3), (3, 1), (4, 3), (1, 4)])
-graph.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 5), (5, 1), (5, 3), (4, 2)])
+#graph.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 5), (5, 1), (5, 3), (4, 2)])
 
 # Modify the graph to make it a directed Eulerian graph
-eulerian_graph = make_directed_eulerian_graph(graph)
-eulerian_circuit = list(nx.eulerian_circuit(eulerian_graph))
-print(eulerian_circuit)
-ut.draw_simple_graph(eulerian_graph, eulerian_circuit)
+#eulerian_graph = make_directed_eulerian_graph(graph)
+#eulerian_circuit = list(nx.eulerian_circuit(eulerian_graph))
+#print(eulerian_circuit)
+#ut.draw_simple_graph(eulerian_graph, eulerian_circuit)
 
 # Show the graph
-plt.show()
+#plt.show()
