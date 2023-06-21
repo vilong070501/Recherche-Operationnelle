@@ -1,6 +1,10 @@
-import osmnx as ox
+import sys
+sys.path.insert(0, '../src/')
 import networkx as nx
 import matplotlib.pyplot as plt
+import utils as ut
+import numpy as np
+import osmnx as ox
 import matplotlib.animation as animation
 import parcours_drone as pd
 
@@ -14,6 +18,11 @@ graph = ox.graph_from_place(address, network_type='drive')
 graph = graph.to_undirected()
 
 eulerian_circuit, distance = pd.shortest_travel(graph)
+
+print("************************************")
+ut.pretty_print(distance)
+print("************************************")
+
 
 # Dessinez le sous-graphe en gris
 fig, ax = ox.plot_graph(graph, figsize=(10,10), edge_color='gray', edge_linewidth=0.5, 

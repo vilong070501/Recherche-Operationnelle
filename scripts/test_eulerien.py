@@ -25,9 +25,11 @@ graph.add_weighted_edges_from(edges)
 if nx.is_eulerian(graph):
     # Calcul du circuit eulérien
     eulerian_circuit, distance = pd.shortest_travel(graph, 2)
-    print(eulerian_circuit)
-    print(distance)
-    print(ut.cost_drone(distance))
+    res = ut.cost_drone(distance)
+    print("circuit eulerien:", eulerian_circuit)
+    print("distance:", distance)
+    print("cout:", res[0])
+    print("temps:", ut.pretty_time(res[1]))
     # Affichage du graph
     ut.draw_simple_graph(graph, eulerian_circuit)
 else:
