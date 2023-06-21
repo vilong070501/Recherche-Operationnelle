@@ -27,9 +27,12 @@ else:
     # Calculate the Eulerian circuit
     try:
         eulerian_circuit, distance = pd.shortest_travel(graph, 0)
-        print(eulerian_circuit)
-        print(distance)
-        print(ut.cost(distance))
+        res = ut.cost_drone(distance)
+        print("circuit eulerien:", eulerian_circuit)
+        print("distance:", distance)
+        print("cout:", res[0])
+        print("temps:", ut.time(res[1]))
+
         # Dessiner le graphe avec le circuit eulérien
         ut.draw_simple_graph(graph, eulerian_circuit)
 
