@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from math import ceil
 
+vitesse = 40
+
 def draw_simple_graph(graph, eulerian_circuit):
     # Create a figure and axis for the animation
     fig, ax = plt.subplots()
