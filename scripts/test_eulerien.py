@@ -27,7 +27,7 @@ if nx.is_eulerian(graph):
     eulerian_circuit, distance = pd.shortest_travel(graph, 2)
     print(eulerian_circuit)
     print(distance)
-    print(ut.cost(distance))
+    print(ut.cost_drone(distance))
     # Affichage du graph
     ut.draw_simple_graph(graph, eulerian_circuit)
 else:

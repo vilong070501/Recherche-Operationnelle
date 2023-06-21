@@ -29,7 +29,7 @@ else:
         eulerian_circuit, distance = pd.shortest_travel(graph, 0)
         print(eulerian_circuit)
         print(distance)
-        print(ut.cost(distance))
+        print(ut.cost_drone(distance))
         # Dessiner le graphe avec le circuit eulérien
         ut.draw_simple_graph(graph, eulerian_circuit)
 

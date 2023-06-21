@@ -31,8 +31,65 @@ def draw_simple_graph(graph, eulerian_circuit):
     # Show the animation
     plt.show()
 
-def cost(distance):
-    #12hours of work
-    t = distance/(50)
-    j = ceil(t/12)
-    return 100 * j + distance * 0.01
+def cost_drone(distance):
+    """Return cost of drone walktrough
+    Args:
+        distance (float): total distance in km
+    """
+    #hyp : 12 hours of work
+    heures = distance/(40)
+    jours = ceil(heures/12)
+    return 100 * jours + distance * 0.01
+
+#distance en km/h
+def cost_deneigement_1(distance):
+    """Return cost of snow removal using one type 1 vehicule
+    Args:
+        distance (float): total distance in km
+    """
+    #hyp : 12hours of work
+    heures = distance/10
+    jours = ceil(heures/12)
+    #hyp : 8 premiers heures chaque jour
+    heure_reste = (jours - int(jours)) * 12
+    if heure_reste - 8 > 0 :
+        depassement = heure_reste - 8
+    else :
+        depassement = 0
+    normal = heure_reste - depassement
+    cout_fixe = 500 * jours
+    cout_kilometrique = 1.1 * distance
+    cout_horaire_entier = (8 * 1.1 + 4 * 1.3) * int(jours)
+    cout_horaire_reste = normal * 1.1 + depassement * 1.3
+    return cout_fixe + cout_kilometrique + cout_horaire_entier + cout_horaire_reste
+
+def cost_deneigement_2(distance):
+    """Return cost of snow removal using one type 2 vehicule
+    Args:
+        distance (float): total distance in km
+    """
+    #hyp : 12hours of work
+    heures = distance/10
+    jours = ceil(heures/12)
+    #hyp : 8 premiers heures chaque jour
+    heure_reste = (jours - int(jours)) * 12
+    if heure_reste - 8 > 0 :
+        depassement = heure_reste - 8
+    else :
+        depassement = 0
+    normal = heure_reste - depassement
+    cout_fixe = 800 * jours
+    cout_kilometrique = 1.3 * distance
+    cout_horaire_entier = (8 * 1.3 + 4 * 1.5) * int(jours)
+    cout_horaire_reste = normal * 1.3 + depassement * 1.5
+    return cout_fixe + cout_kilometrique + cout_horaire_entier + cout_horaire_reste
+
+def cost_deneigement_mixte(distance, k1, k2):
+    """Return mixted cost of snow removal using one type 1 vehicule and one type 2 vehicule
+    
+    Args:
+        distance (float): total distance in km
+        k1 (float): coefficient < 1
+        k2 (float): coefficient < 1
+    """
+    return cost_deneigement_1(k1 * distance) + cost_deneigement_2(k2 * distance)
