@@ -42,6 +42,7 @@ def eulerize_directed_graph(DG):
 
 def shortest_travel(graph, weight_function):
     distance = 0
+    optimal_path = []
 
     diff_degree = defaultdict(int)
     for node in graph.nodes():
@@ -68,10 +69,17 @@ def shortest_travel(graph, weight_function):
 
         if nx.has_eulerian_path(eulerian_component):
             eulerian_path = nx.eulerian_path(eulerian_component)
+            optimal_path.append(list(eulerian_path))
             for u, v in eulerian_path:
                 distance += nx.shortest_path_length(graph, u, v, weight_function)
 
-    link_edges -= set(subgraph.edges())
+        link_edges -= set(subgraph.edges())
+    """
+    print(link_edges)
+    print(nx.shortest_path(graph, 213955306, 4774155870))
+    print(nx.shortest_path(graph, 4774155870, 213955306))
+    """
+    
     l = []
     for u, v in link_edges:
         l.append((mapping[u], mapping[v], graph[u][v][0]['length']))
@@ -84,9 +92,10 @@ def shortest_travel(graph, weight_function):
         diff_degree[node] = new_graph.out_degree(node) - new_graph.in_degree(node)
 
     path = ut.DFS(new_graph, dict(diff_degree), 'weight')
+    #optimal_path += path
 
     for path in path:
         for u, v, d in path:
             distance += d
 
-    return distance / 1000
+    return optimal_path, distance / 1000

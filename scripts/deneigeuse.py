@@ -19,7 +19,7 @@ graph = ox.graph_from_place(address, network_type='drive')
 def weight(v, u, e):
     return e[0]['length']
 
-distance = dn.shortest_travel(graph, weight)
+optimal_path, distance = dn.shortest_travel(graph, weight)
 cost1, jours1 = ut.cost_deneigement_1(distance)
 cost2, jours2 = ut.cost_deneigement_2(distance)
 cost_mixte, jours_mixte = ut.cost_deneigement_mixte(distance, 0.1, 0.9)
@@ -38,4 +38,6 @@ output_file.close()
 print(date.today().strftime("%B %d, %Y") + "\n")
 print("Parcours des déneigeuses sur le quartier \033[91m" + address + "\033[0m")
 ut.pretty_print(distance)
+print("Chemin complet\n")
+print(optimal_path)
 

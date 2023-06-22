@@ -43,4 +43,4 @@ print("Coût du parcours = \033[92m" + str(cost) + "€\033[0m")
 print("Chemin complet\n")
 print(eulerian_circuit)
 
-#ut.draw_graph_with_animation(graph, eulerian_circuit)
+ut.draw_graph_with_animation(graph, eulerian_circuit)
