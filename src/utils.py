@@ -1,4 +1,5 @@
 import networkx as nx
+import osmnx as ox
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from math import ceil
@@ -29,6 +30,42 @@ def draw_simple_graph(graph, eulerian_circuit):
 
     # Create the animation using the update function and the number of frames
     ani = animation.FuncAnimation(fig, update, frames=num_frames, interval=800)
+
+    # Show the animation
+    plt.show()
+
+def draw_graph_with_animation(graph, eulerian_circuit):
+    # Dessinez le sous-graphe en gris
+    fig, ax = ox.plot_graph(graph, figsize=(10,10), edge_color='gray', edge_linewidth=0.5,
+                            node_size=3, node_color='gray', node_zorder=1, bgcolor='black',
+                            show=False, close=False)
+
+    # Layout for the graph
+    layout = nx.spring_layout(graph, seed=42)
+
+    # Function to update the edge colors for each frame of the animation
+    def update(frame):
+        # Get the edges to highlight in the current frame
+        highlighted_edges = eulerian_circuit[:frame+1]
+
+        # Convert edges to nodes
+        highlighted_nodes = [edge[0] for edge in highlighted_edges]
+
+        # Add the last node of the last edge, if it exists
+        if highlighted_edges:
+            highlighted_nodes.append(highlighted_edges[-1][1])
+
+        # Draw the graph with default edge colors
+        ox.plot_graph_route(graph, highlighted_nodes, route_color='red',
+                            route_linewidth=2, node_size=0, bgcolor='black', show=False, close=False,
+                            ax=ax, edge_color='red')
+
+
+    # Set the number of frames equal to the length of M
+    num_frames = len(eulerian_circuit)
+
+    # Create the animation using the update function and the number of frames
+    ani = animation.FuncAnimation(fig, update, frames=num_frames, interval=0.01)
 
     # Show the animation
     plt.show()
@@ -82,17 +119,16 @@ def pretty_print(distance):
     res1 = cost_deneigement_1(distance)
     res2 = cost_deneigement_2(distance)
     res3 = cost_deneigement_mixte(distance, 0.1, 0.9)
-    print("distance=", distance, "km")
-    print("type1 : cout=", res1[0], "temps=", pretty_time(res1[1]))
-    print("type2 : cout=", res2[0], "temps=", pretty_time(res2[1]))
-    print("type_mixte (0.1 type1, 0.9 type2): cout=", res3[0], "temps=", pretty_time(res3[1]))
-    plot_functions_mixte(distance, cost_deneigement_1, cost_deneigement_2, cost_deneigement_mixte)
+    print("Longueur totale du parcours = \033[92m", distance, "km\033[0m")
+    print("Type1 : Coût total = \033[92m", res1[0], "€\033[0m, Temps nécessaire = \033[92m", pretty_time(res1[1]) + "\033[0m")
+    print("Type2 : Coût total = \033[92m", res2[0], "€\033[0m, Temps nécessaire = \033[92m", pretty_time(res2[1]) + "\033[0m")
+    print("Type_mixte (0.1 type1, 0.9 type2): Coût total = \033[92m", res3[0], "€\033[0m, Temps nécessaire = \033[92m", pretty_time(res3[1]) + "\033[0m")
 
 def cost_drone(distance):
     """Cost of drone walktrough
     Args:
         distance (float): total distance in km
-    
+
     Returns:
         cost (float): euros
         time (float): jours
@@ -109,7 +145,7 @@ def cost_deneigement_1(distance):
     """Cost of snow removal using one type 1 vehicule
     Args:
         distance (float): total distance in km
-    
+
     Returns:
         cost (float): euros
         time (float): jours
@@ -137,7 +173,7 @@ def cost_deneigement_2(distance):
     """Cost of snow removal using one type 2 vehicule
     Args:
         distance (float): total distance in km
-    
+
     Returns:
         cost (float): euros
         time (float): jours
@@ -163,7 +199,7 @@ def cost_deneigement_2(distance):
 
 def cost_deneigement_mixte(distance, k1, k2):
     """Mixted cost of snow removal using one type 1 vehicule and one type 2 vehicule
-    
+
     Args:
         distance (float): total distance in km
         k1 (float): coefficient < 1
@@ -176,3 +212,35 @@ def cost_deneigement_mixte(distance, k1, k2):
     res1 = cost_deneigement_1(k1 * distance)
     res2 = cost_deneigement_2(k2 *distance)
     return res1[0] + res2[0], res1[1] + res2[1]
+
+def DFS(graph, diff, key):
+    not_seen = list(graph.nodes)
+    visited = []
+    def rec(s):
+        if s in not_seen:
+            not_seen.remove(s)
+            diff.pop(s)
+        for d in graph.successors(s):
+            if (s,d,graph[s][d][0][key]) not in visited:
+                if d in not_seen:
+                    not_seen.remove(d)
+                    diff.pop(d)
+
+                if visited != [] and visited[-1][1] != s:
+                    visited.append(())
+                visited.append((s,d,graph[s][d][0][key]))
+                rec(d)
+    while len(not_seen) > 0:
+        start = max(diff, key=diff.get)
+        rec(start)
+    result = []
+    tmp = []
+    for e in visited:
+        if e != ():
+            tmp.append(e)
+        else:
+            result.append(tmp)
+            tmp = []
+    if tmp != []:
+        result.append(tmp)
+    return result

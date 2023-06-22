@@ -1,12 +1,12 @@
 import sys
-sys.path.insert(0, '../src/')
+sys.path.insert(0, '../../src/')
 
 import networkx as nx
 import utils as ut
 import parcours_drone as pd
 
 # Créer un graph vide
-graph = nx.MultiDiGraph()
+graph = nx.MultiGraph()
 
 # Ajout des sommets et des arêtes
 edges = [
@@ -25,11 +25,9 @@ graph.add_weighted_edges_from(edges)
 if nx.is_eulerian(graph):
     # Calcul du circuit eulérien
     eulerian_circuit, distance = pd.shortest_travel(graph, 2)
-    res = ut.cost_drone(distance)
-    print("circuit eulerien:", eulerian_circuit)
-    print("distance:", distance)
-    print("cout:", res[0])
-    print("temps:", ut.pretty_time(res[1]))
+    print("Cylce eulérien\n")
+    print(eulerian_circuit)
+    print("distance = " + str(distance))
     # Affichage du graph
     ut.draw_simple_graph(graph, eulerian_circuit)
 else:

@@ -1,29 +1,31 @@
 import networkx as nx
 
-def shortest_travel(graph, source_node=None):
-    #if not nx.is_eulerian(graph):
+def shortest_travel(graph, weight_function='weight', source_node=None):
+    
     augmented_graph = graph.copy()
-
-    # Identify nodes with odd degrees
-    odd_degree_nodes = [node for node, degree in graph.degree if degree % 2 != 0]
+    matching = set()
 
     # Compute distance matrix with dijkstra algorithm
-    distance_matrix = dict(nx.all_pairs_dijkstra_path_length(graph, weight='weight'))
-
-    # Create a complete graph among the odd degree nodes
-    complete_graph = nx.complete_graph(odd_degree_nodes)
-    weights = {(x,y): {"weight": distance_matrix[x][y]} for x, y in complete_graph.edges}
-    nx.set_edge_attributes(complete_graph, weights)
-
-
-    # Compute minimum weight matching on the complete graph
-    matching = nx.algorithms.matching.min_weight_matching(complete_graph, weight='weight')
-    weighted_matching = [(x, y, distance_matrix[x][y]) for x, y in matching]
-    seen = []
+    distance_matrix = dict(nx.all_pairs_dijkstra_path_length(graph, weight=weight_function))
     
-    # Add matching edges to the original graph
-    augmented_graph.add_weighted_edges_from(weighted_matching)
-    print(matching)
+    if not nx.is_eulerian(graph):
+
+        # Identify nodes with odd degrees
+        odd_degree_nodes = [node for node, degree in graph.degree if degree % 2 != 0]
+
+        # Create a complete graph among the odd degree nodes
+        complete_graph = nx.complete_graph(odd_degree_nodes)
+        weights = {(x,y): {"weight": distance_matrix[x][y]} for x, y in complete_graph.edges}
+        nx.set_edge_attributes(complete_graph, weights)
+
+        # Compute minimum weight matching on the complete graph
+        matching = nx.algorithms.matching.min_weight_matching(complete_graph, weight='weight')
+        weighted_matching = [(x, y, distance_matrix[x][y]) for x, y in matching]
+        seen = []
+        
+        # Add matching edges to the original graph
+        augmented_graph.add_weighted_edges_from(weighted_matching)
+        #print(matching)
 
     # Calculate the Eulerian circuit
     eulerian_circuit = []
@@ -48,4 +50,4 @@ def shortest_travel(graph, source_node=None):
     somme = 0
     for edge in eulerian_circuit:
         somme += distance_matrix[edge[0]][edge[1]]
-    return eulerian_circuit, somme
+    return eulerian_circuit, somme / 1000
