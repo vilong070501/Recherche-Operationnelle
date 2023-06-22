@@ -69,10 +69,11 @@ def shortest_travel(graph, weight_function):
 
         if nx.has_eulerian_path(eulerian_component):
             eulerian_path = nx.eulerian_path(eulerian_component)
-            optimal_path.append(list(eulerian_path))
+            tmp = []
             for u, v in eulerian_path:
+                tmp.append((u,v))
                 distance += nx.shortest_path_length(graph, u, v, weight_function)
-
+            optimal_path.append(tmp)
         link_edges -= set(subgraph.edges())
     """
     print(link_edges)
